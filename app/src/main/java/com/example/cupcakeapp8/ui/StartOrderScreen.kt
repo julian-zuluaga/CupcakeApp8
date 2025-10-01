@@ -1,4 +1,4 @@
-package com.example.cupcakeapp8
+package com.example.cupcakeapp8.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
