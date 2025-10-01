@@ -25,9 +25,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.cupcakeapp8.data.DataSource
 import com.example.cupcakeapp8.ui.StartOrderScreen
+import com.example.cupcakeapp8.ui.SelectOptionScreen
 enum class CupcakeScreen(val title: String) {
     Start(title = "Cupcake App"),
+    Flavor(title = "Choose Flavor"),
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -88,12 +91,16 @@ fun CupcakeApp8() {
                 StartOrderScreen(
                     quantityOptions = DataSource.quantityOptions,
                     onNextButtonClicked = {
-                        // Acción al seleccionar cantidad
+                        navController.navigate(CupcakeScreen.Flavor.name)
                     },
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(dimensionResource(R.dimen.padding_medium))
                 )
+            }
+            composable(route = CupcakeScreen.Flavor.name) {
+                //val context = LocalContext.current
+                SelectOptionScreen()
             }
         }
     }
