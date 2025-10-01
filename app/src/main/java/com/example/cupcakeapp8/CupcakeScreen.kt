@@ -26,6 +26,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.cupcakeapp8.data.DataSource
 import com.example.cupcakeapp8.ui.StartOrderScreen
 import com.example.cupcakeapp8.ui.SelectOptionScreen
+import androidx.compose.ui.platform.LocalContext
+
 enum class CupcakeScreen(val title: String) {
     Start(title = "Cupcake App"),
     Flavor(title = "Choose Flavor"),
@@ -99,8 +101,10 @@ fun CupcakeApp8() {
                 )
             }
             composable(route = CupcakeScreen.Flavor.name) {
-                //val context = LocalContext.current
-                SelectOptionScreen()
+                val context = LocalContext.current
+                SelectOptionScreen(
+                    options = DataSource.flavors.map { id -> context.resources.getString(id) }
+                )
             }
         }
     }
