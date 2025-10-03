@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -16,9 +17,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -28,10 +29,10 @@ import com.example.cupcakeapp8.data.DataSource
 import com.example.cupcakeapp8.ui.StartOrderScreen
 import com.example.cupcakeapp8.ui.SelectOptionScreen
 
-// Enum para pantallas
+// 📌 Enum de pantallas
 enum class CupcakeScreen(val title: String) {
-    Start(title = "Cupcake App"),
-    Flavor(title = "Choose Flavor"),
+    Start(title = "Cupcake App"),       // Selección de cantidad
+    Flavor(title = "Choose Flavor"),    // Selección de sabor
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,10 +63,10 @@ fun CupcakeAppBar(
 }
 
 @Composable
-fun CupcakeApp8() {
+fun CupcakeApp8(orderViewModel: OrderViewModel = viewModel()) {
     val navController: NavHostController = rememberNavController()
 
-    // Detectar la pantalla actual
+    // Obtenemos la pantalla actual para el título dinámico
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreen = CupcakeScreen.valueOf(
         backStackEntry?.destination?.route ?: CupcakeScreen.Start.name
@@ -89,12 +90,13 @@ fun CupcakeApp8() {
                 .verticalScroll(rememberScrollState())
                 .padding(innerPadding)
         ) {
-            // Pantalla inicial (cantidad)
+            // 🟢 Pantalla inicial → selección de cantidad
             composable(route = CupcakeScreen.Start.name) {
                 StartOrderScreen(
                     quantityOptions = DataSource.quantityOptions,
-                    onNextButtonClicked = {
-                        navController.navigate(CupcakeScreen.Flavor.name)
+                    onNextButtonClicked = { quantity ->
+                        orderViewModel.setQuantity(quantity)   // guardamos cantidad en el ViewModel
+                        navController.navigate(CupcakeScreen.Flavor.name) // navegamos a sabor
                     },
                     modifier = Modifier
                         .fillMaxSize()
@@ -102,21 +104,19 @@ fun CupcakeApp8() {
                 )
             }
 
-            // Pantalla de sabor
+            // 🟢 Pantalla de selección de sabor
             composable(route = CupcakeScreen.Flavor.name) {
                 val context = LocalContext.current
                 SelectOptionScreen(
-                    options = DataSource.flavors.map { id -> context.resources.getString(id) }
+                    options = DataSource.flavors.map { id -> context.resources.getString(id) },
+                    onSelectionChanged = { flavor ->
+                        orderViewModel.setFlavor(flavor) // guardamos el sabor en el ViewModel
+                    },
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(dimensionResource(R.dimen.padding_medium))
                 )
             }
         }
     }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
 }
