@@ -18,6 +18,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -26,13 +27,12 @@ import androidx.navigation.compose.rememberNavController
 import com.example.cupcakeapp8.data.DataSource
 import com.example.cupcakeapp8.ui.StartOrderScreen
 import com.example.cupcakeapp8.ui.SelectOptionScreen
-import androidx.compose.ui.platform.LocalContext
 
+// Enum para pantallas
 enum class CupcakeScreen(val title: String) {
     Start(title = "Cupcake App"),
     Flavor(title = "Choose Flavor"),
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,11 +61,11 @@ fun CupcakeAppBar(
     )
 }
 
-
 @Composable
 fun CupcakeApp8() {
     val navController: NavHostController = rememberNavController()
 
+    // Detectar la pantalla actual
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreen = CupcakeScreen.valueOf(
         backStackEntry?.destination?.route ?: CupcakeScreen.Start.name
@@ -89,6 +89,7 @@ fun CupcakeApp8() {
                 .verticalScroll(rememberScrollState())
                 .padding(innerPadding)
         ) {
+            // Pantalla inicial (cantidad)
             composable(route = CupcakeScreen.Start.name) {
                 StartOrderScreen(
                     quantityOptions = DataSource.quantityOptions,
@@ -100,6 +101,8 @@ fun CupcakeApp8() {
                         .padding(dimensionResource(R.dimen.padding_medium))
                 )
             }
+
+            // Pantalla de sabor
             composable(route = CupcakeScreen.Flavor.name) {
                 val context = LocalContext.current
                 SelectOptionScreen(
@@ -110,7 +113,6 @@ fun CupcakeApp8() {
     }
 }
 
-
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     Text(
@@ -118,4 +120,3 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         modifier = modifier
     )
 }
-
